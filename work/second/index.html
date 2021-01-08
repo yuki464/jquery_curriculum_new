@@ -24,13 +24,13 @@
       // 今回やるのはモーダルです。
       $(function(){
         $(".modal-show").click(fadeIn);
-        function fadeIn() {
-          $(".modal").fadeIn(3000);
-         $(".modal-close").click(fadeOut);
-          function fadeOut(){
-            $(".modal").fadeOut(3000);
+          function fadeIn() {
+            $(".modal").fadeIn(3000);
+            $(".modal-close").click(fadeOut);
+            function fadeOut(){
+              $(".modal").fadeOut(3000);
+            }
           }
-        }
       });
       // .modal-show をクリックすることで .modal をfadeInさせる。
       // .modal-close をクリックで .modal をfadeOutさせる。

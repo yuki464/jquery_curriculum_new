@@ -48,16 +48,17 @@
     <script src="../../common/js/jquery.js"></script>
     <script>
       // 今回やるのはドロップメニューです。
-      $(function(){
-       $(".menu__list").children().hover(function(){
+      $(function() {
+        var menu = $(".menu__list").children();
+        menu.hover(function() {
          //メニューリストの子要素にカーソルが乗った際の関数
-        console.log("test")
-         $(this).children().stop().slideDown()
+          console.log("test")
+          $(this).children().stop().slideDown()
          //の、子要素がスライドダウンする。ちなみにストップがないと連続でホバーした時にバグる
-       },function() {
+        },function() {
          //  [,function]によってホバーが離れた処理を実行、ちなみにストップのいちを間違えると挙動がバグる
-         $(this).children("ul").stop().slideUp()
-       });
+          $(this).children("ul").stop().slideUp()
+        });
       });
      
 

@@ -91,8 +91,7 @@
       
       $(function(){
         var currentPage = 0;
-        var keyword = "";
-
+        var keyword = ""
           // 商品の羅列
         function listHtml(i,item){ 
             var html = 
@@ -107,7 +106,7 @@
               </div>
               </li >`;
                 $('ul').prepend(html);
-                };
+        };
                 // ページャー
           function pageHtml(data){
             var html = `<div class="pager" data-js="pager">
@@ -144,19 +143,19 @@
         // Ajaxの関数 
           function ajax(){
             $.ajax({
-         url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-         type: 'GET',
-         datatype: 'json',
-         data: {
+              url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+              type: 'GET',
+              datatype: 'json',
+              data: {
            // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
-          applicationId: appId,
-          booksGenreId: '001',
-          keyword: keyword,
-          hits: '20',
-          timeout: 10000,
-          pageCount: 100,
-          page: currentPage, 
-        }})
+                applicationId: appId,
+                booksGenreId: '001',
+                keyword: keyword,
+                hits: '20',
+                timeout: 10000,
+                pageCount: 100,
+                page: currentPage, 
+            }})
         .done(function(data){
           console.log(data);
           if (data.count > 0){
@@ -164,51 +163,51 @@
             pageHtml(data);
           $.each(data.Items,function(i,item){
             listHtml(i,item);
-            });
+          });
           }  else if (data.count === 0){
                 console.log("w")
                 emptyHtml();
                 noFindMessage();
-              }
+            }
           // 無効化処理
           if(data.pageCount === 1) {
            $('[data-js="page-prev"]').addClass("disabled");
            $('[data-js="page-next"]').addClass("disabled");
-         }
+          }
           else if (data.pageCount === data.page) {
-              console.log("test");
-              $('[data-js="page-next"]').addClass("disabled");
-            }
+            console.log("test");
+            $('[data-js="page-next"]').addClass("disabled");
+          }
           else if(data.page === 1 ) {
             console.log("test2")
-              $('[data-js="page-prev"]').addClass("disabled");
+            $('[data-js="page-prev"]').addClass("disabled");
           }
 
         })
-            .fail(function(data){
-             if (keyword === ""){
-                emptyHtml();
-                noText();
-              } 
-              else {
-                emptyHtml();
-                errorSample();
-              }
-          });
+        .fail(function(data){
+          if (keyword === ""){
+            emptyHtml();
+            noText();
+          } 
+          else {
+            emptyHtml();
+            errorSample();
+          }
+        });
       };
 
       // 次へ
-      function nextPage(){
+      function nextPage() {
         event.preventDefault();
         currentPage++;
       };
       // 戻る
-      function prevPage(){
+      function prevPage() {
         event.preventDefault();
         currentPage--;
       };
       // クリックした時
-      $('.search__btn').on('click',function(data){
+      $('.search__btn').on('click',function(data) {
         keyword = $(".search__text__input").val();
         currentPage = 1;
         if (keyword === ""){
@@ -216,20 +215,20 @@
           noText();
         }
         ajax();
-     });
+      });
     //  エンターキーでも検索できる様にする
      $("body").keydown(function (e) {
         console.log(e);
         // 13:enterKey
         if (e.keyCode == 13) {
         // ここに処理
-        keyword = $(".search__text__input").val();
-        currentPage = 1;
-        if (keyword === ""){
-          emptyHtml();
-          noText();
-        }
-        ajax();
+          keyword = $(".search__text__input").val();
+          currentPage = 1;
+          if (keyword === ""){
+            emptyHtml();
+            noText();
+          }
+            ajax();
         }
         // ページ送りもやってみた
         if (e.keyCode === 39){
@@ -250,7 +249,6 @@
        prevPage();
        ajax();
      });
-     
     });
     </script>
   </body>

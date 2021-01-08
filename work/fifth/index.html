@@ -89,28 +89,28 @@
        //リストにリストを代入
        var list = $(".list").find("li");
        //セレクトクラスの中のvalでセレクトタグの中身をテキストに代入
-      $(".select").on("change",function(){
+       $(".select").on("change",function() {
         var text = $(this).val();
         //セレクトタグがALLの時の処理
         if(text === "all"){
-      $(list).each(function(){ $(this).show() }); 
-        console.log(this);
-      //全部SHOWする
-    } else {
-      //それ以外の処理
-      $(list).each(function(){
-        //リストのデータタイプがセレクトタグと一緒なら
-        if($(this).data("category-type")==text){ 
+          $(list).each(function() { $(this).show() }); 
           console.log(this);
-          $(this).show(); 
+      //全部SHOWする
+        } else {  
+      //それ以外の処理
+          $(list).each(function() {
+        //リストのデータタイプがセレクトタグと一緒なら
+          if($(this).data("category-type")==text) { 
+            console.log(this);
+            $(this).show(); 
           //データタイプの一致した物をSHOWする
-        } else {
+          } else {
           //一致していない物はhideにて隠す
           //そうでない時のthisに変化する
-          $(this).hide();
-        }
-       });
-        }
+            $(this).hide();
+            }
+          });
+          }
         });
       });
       // 今回やるのはソート機能です。
