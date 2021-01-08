@@ -26,8 +26,9 @@
       </div>
     </div>
     <script src="../../common/js/jquery.js"></script>
-    <script src="./js/appid.js"></script>
+    <script src="../../common/js/appid.js"></script>
     <script>
+      
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //
@@ -64,7 +65,7 @@
       //    <a href="" class="lists__item__link" target="_blank">
       //      <img src="" class="lists__item__img" alt="">
       //      <p class="lists__item__detail">作品名：</p>
-      //      <p class="lists__item__detail">作者　：</p>
+      //      <p class="lists__item__detail">作者：</p>
       //      <p class="lists__item__detail">出版社：</p>
       //    </a>
       //  </div>
@@ -86,7 +87,171 @@
       //     <a class="btn-item" data-js="page-prev" href="">前へ</a>
       //     <a class="btn-item" data-js="page-next" href="">次へ</a>
       //   </div>
-      // </div>
+      //  </div>
+      
+      $(function(){
+        var currentPage = 0;
+        var keyword = "";
+
+          // 商品の羅列
+        function listHtml(i,item){ 
+            var html = 
+            `<li class="lists__item">
+              <div class="lists__item__inner">
+                <a href="${item.Item.itemUrl}" class="lists__item__link" target="_blank">
+                  <img src="${item.Item.mediumImageUrl}" class="lists__item__img" alt="">
+                  <p class="lists__item__detail">作品名：${item.Item.title}</p>
+                  <p class="lists__item__detail">作者：${item.Item.author}</p>
+                  <p class="lists__item__detail">出版社：${item.Item.publisherName}</p>
+                </a>
+              </div>
+              </li >`;
+                $('ul').prepend(html);
+                };
+                // ページャー
+          function pageHtml(data){
+            var html = `<div class="pager" data-js="pager">
+                  <div class="counter">
+                    <span class="counter-current">${data.page}</span>/<span class="counter-all">${data.pageCount}</span>
+                  </div>
+                  <div class="btn-wrapper">
+                    <a class="btn-item" data-js="page-prev" href="">前へ</a>
+                    <a class="btn-item" data-js="page-next" href="">次へ</a>
+                  </div>
+                </div>`;
+                $(".lists").append(html);
+          };
+          // 検索見つからない
+          function noFindMessage(){
+            var html = `<p class="message">検索結果が見つかりませんでした。</p>`
+            $(".message").after(html).remove();
+          };
+          // キーワードが空
+          function noText(){
+            var html = `<p class="message">検索文字を入力してください。</p>`
+            $(".message").after(html).remove();
+          };
+          // 空っぽにする関数
+          function emptyHtml() {
+            $(".message").empty();
+            $(".lists").empty();
+          };
+          // 連打した時の関数（見本とおなじ）
+          function errorSample(){
+            var html = `<p class="message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>`
+            $(".message").after(html).remove();
+          };
+        // Ajaxの関数 
+          function ajax(){
+            $.ajax({
+         url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+         type: 'GET',
+         datatype: 'json',
+         data: {
+           // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+          applicationId: appId,
+          booksGenreId: '001',
+          keyword: keyword,
+          hits: '20',
+          timeout: 10000,
+          pageCount: 100,
+          page: currentPage, 
+        }})
+        .done(function(data){
+          console.log(data);
+          if (data.count > 0){
+            emptyHtml()
+            pageHtml(data);
+          $.each(data.Items,function(i,item){
+            listHtml(i,item);
+            });
+          }  else if (data.count === 0){
+                console.log("w")
+                emptyHtml();
+                noFindMessage();
+              }
+          // 無効化処理
+          if(data.pageCount === 1) {
+           $('[data-js="page-prev"]').addClass("disabled");
+           $('[data-js="page-next"]').addClass("disabled");
+         }
+          else if (data.pageCount === data.page) {
+              console.log("test");
+              $('[data-js="page-next"]').addClass("disabled");
+            }
+          else if(data.page === 1 ) {
+            console.log("test2")
+              $('[data-js="page-prev"]').addClass("disabled");
+          }
+
+        })
+            .fail(function(data){
+             if (keyword === ""){
+                emptyHtml();
+                noText();
+              } 
+              else {
+                emptyHtml();
+                errorSample();
+              }
+          });
+      };
+
+      // 次へ
+      function nextPage(){
+        event.preventDefault();
+        currentPage++;
+      };
+      // 戻る
+      function prevPage(){
+        event.preventDefault();
+        currentPage--;
+      };
+      // クリックした時
+      $('.search__btn').on('click',function(data){
+        keyword = $(".search__text__input").val();
+        currentPage = 1;
+        if (keyword === ""){
+          emptyHtml();
+          noText();
+        }
+        ajax();
+     });
+    //  エンターキーでも検索できる様にする
+     $("body").keydown(function (e) {
+        console.log(e);
+        // 13:enterKey
+        if (e.keyCode == 13) {
+        // ここに処理
+        keyword = $(".search__text__input").val();
+        currentPage = 1;
+        if (keyword === ""){
+          emptyHtml();
+          noText();
+        }
+        ajax();
+        }
+        // ページ送りもやってみた
+        if (e.keyCode === 39){
+          nextPage();
+          ajax();
+        }
+        if (e.keyCode === 37){
+          prevPage();
+          ajax();
+        }
+    });
+    //  ページャー
+     $("body").on("click",('[data-js="page-next"]') , function(){
+       nextPage();
+       ajax();
+     });
+     $("body").on("click",('[data-js="page-prev"]') , function(){
+       prevPage();
+       ajax();
+     });
+     
+    });
     </script>
   </body>
 </html>

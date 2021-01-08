@@ -83,7 +83,36 @@
       </div>
     </div>
     <script src="../../common/js/jquery.js"></script>
+
     <script>
+     $(function(){
+       //リストにリストを代入
+       var list = $(".list").find("li");
+       //セレクトクラスの中のvalでセレクトタグの中身をテキストに代入
+      $(".select").on("change",function(){
+        var text = $(this).val();
+        //セレクトタグがALLの時の処理
+        if(text === "all"){
+      $(list).each(function(){ $(this).show() }); 
+        console.log(this);
+      //全部SHOWする
+    } else {
+      //それ以外の処理
+      $(list).each(function(){
+        //リストのデータタイプがセレクトタグと一緒なら
+        if($(this).data("category-type")==text){ 
+          console.log(this);
+          $(this).show(); 
+          //データタイプの一致した物をSHOWする
+        } else {
+          //一致していない物はhideにて隠す
+          //そうでない時のthisに変化する
+          $(this).hide();
+        }
+       });
+        }
+        });
+      });
       // 今回やるのはソート機能です。
       // selectボックスをクリックして言語を選び、その言語と関係のあるリストだけが表示されるプログラムです。
       // [処理の流れ]

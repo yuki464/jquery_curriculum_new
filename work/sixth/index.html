@@ -26,6 +26,21 @@
       // .keyup() 文字入力後に発火されるイベントです。
       // .replace(/\s+/g,'').length 改行を含まない文字数を取得します。
       // .val() input要素のvalueを取得します。
+      $(function(){
+        $(".input").on("keyup",function(){
+          //thisがインプットなのでインプットのなかで入力された文字数を３０に引いているそのなかにリプレイスでスペースがカウントされない様にする
+          var remain =30 - $(this).val().replace(/\s+/g,'').length;
+          //レストカウントクラスにremain(そのままだと３０を代入)
+          //もし０をカウントダウンで超えた場合、赤くする
+          $(".rest-count").text(remain);
+          if (remain < 0) {
+            $(".rest-count").css("color","red")
+            //それ以外はグレー
+          }else {
+            $(".rest-count").css("color","gray");
+          }
+        });
+      });
     </script>
   </body>
 </html>

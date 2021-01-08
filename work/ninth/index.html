@@ -40,8 +40,30 @@
       // <li class="colorList__item">
       //   <p class="colorList__title" style="background-color: ;"></p>
       // </li>
-      //
+      
       // このテンプレートに取得してきた中身を入れて表示します。
+
+      $(function(){
+        var list = $(".colorList")
+      $.ajax({
+        url: './data.json'
+      })
+      .done(function(data) {
+        var aHtml = ""
+        console.log(data);
+        // なかなかできなかったがここの引数を渡したらできたのでレビューの際にきく
+      $.each(data.colorsArray, function(index, data){
+        console.log(this);
+        aHtml += `<li class="colorList__item">
+                    <p class="colorList__title" style="background-color: ${data.hexValue} ;">
+                    ${data.colorName}</p>
+                  </li>`;       
+
+        $(list).html(aHtml);
+      });
+      });
+      });
+
     </script>
   </body>
 </html>

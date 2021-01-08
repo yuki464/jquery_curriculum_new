@@ -28,6 +28,43 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        //メニューをクリックした時に発火するイベント
+        $(".menu__btn").on("click",function(){
+          // メニューというのにメニューボタンのデータを含め代入
+          var menu = $(this).data("scroll-place-type");
+          //タイトルクラスを一つづつ取り上げる
+          $(".title").each(function(){
+            //タイトルという変数にタイトルクラスのデータを代入
+            var title = $(this).data("scroll-place-type");
+            //メニューとタイトルのデータタイプが一致した時
+            if( menu===title ){
+              //スクロールプレイスにメニューとタイトルが一致した時のTOPの座標を獲得
+              var scrollPlace=$(this).offset().top;
+              //スクロールトップを使いそのいちを先ほど取得したスクロールプレイスに指定する
+              $('body,html').animate({scrollTop:scrollPlace}); 
+          
+            };
+          });
+            });
+      // ---------topbtn--------
+            //画面をスクロールした時に発火する関数
+        $(window).scroll(function() {
+          //百ピクセル下に動かすと
+        if($(this).scrollTop() > 100 ) {
+          //ディスプレイのーんしていたこのクラスをフェードインで表示
+            $('.scrollTopBtn').fadeIn();
+        } else {
+          //それ以外はまた消す
+            $('.scrollTopBtn').fadeOut();
+        }
+        });
+        //スクロールトップボタンを押した時
+        $('.scrollTopBtn').click(function(){
+          //アニメイトで一番うえにする、５００ははやさ
+        $('html, body').animate({scrollTop: 0}, 500);
+        });
+      });
       // 今回やるのはページ内スクロールです。
       // 左上にあるメニューを押して、そのタイトルと同じ位置までスクロールするアニメーションです。
       // また100pxほどスクロールすると右下にボタンがフェードインします。

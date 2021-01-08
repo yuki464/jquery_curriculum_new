@@ -26,6 +26,47 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        //まずはリストの横幅、リストの数取得
+        var slideWidth = $(".slider-list").find("li").outerWidth();
+        var slideNum = $(".slider-list").find("li").length;
+        var slideSetWidth = slideWidth * slideNum; // .slideの幅×数で求めた値を代入
+        var slideCurrent = 0; // 現在地を示す変数、これがないと最初のところに戻れなかった
+        //スライダーリストクラすのCSSの横幅を上記で作った変数に指定
+        $(".slider-list").css("width",slideSetWidth);
+        //スライドする時の処理を変数にする
+        var sliding = function(){
+          // slideCurrentが0以下だったら
+          if( slideCurrent < 0 ){
+            //確かスライドなむー１にしているのは現在のスライドが０から始まる都合上そう書かないとおかしくなる
+            slideCurrent = slideNum - 1;
+        
+          // slideCurrentがslideNumを超えたら
+          }else if( slideCurrent > slideNum - 1){ // slideCUrrent >= slideNumでも可
+          //スライドなむの数を超えたら最初の画像に戻ってこれる様にする
+            slideCurrent = 0;
+        
+          }
+          //ストップを入れて連打してもバグらない様にする
+          $('.slider-list').stop().animate({
+            //アニメイトで現在のスライドを上記で指定したCSS分左にスライドさせる
+            left: slideCurrent * -slideWidth
+          });
+        }
+        //次へボタンをクリックした時
+        $(".is-next").click(function(){
+          //単純に現在のスライドのいちを＋＋で次に行ける
+          slideCurrent++;
+          //上で作った関数を使用
+          sliding();
+        });
+        //上野戻る処理
+        $(".is-prev").click(function(){
+          slideCurrent--;
+          sliding();
+        });
+      });
+
       // 今回やるのはスライドショーです。
       // 右方向には右のボタンを押すと移動し、左方向には左のボタンを押すと移動する。また右端にいる状態で右のボタンを押すと最初の位置に戻り、 左端にいる状態で左のボタンを押すと最後の位置に移動する。data属性にprev,nextを記述してあるのでこちらを取得すると楽です。
       // 位置情報は配列に格納しておき、右のボタンをクリックするたびに配列の添字を1追加し、左のボタンをクリックすると配列の添字を1減らします。そうすることによって次の座標が取得できます。その座標にアニメーションさせるととても楽です。
