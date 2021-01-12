@@ -93,7 +93,7 @@
         var currentPage = 0;
         var keyword = ""
           // 商品の羅列
-        function listHtml(i, item) {
+        function listHtml(index, item) {
           var html =
             `<li class="lists__item">
               <div class="lists__item__inner">
@@ -164,9 +164,9 @@
             emptyHtml()
             pageHtml(data);
             $.each(data.Items,function(index,item) {
-              listHtml(i,item);
+              listHtml(index,item);
             });
-          }  else if (data.count === 0) {
+          } else if (data.count === 0) {
             console.log("t")
             emptyHtml();
             noFindMessage();
@@ -195,61 +195,61 @@
         });
       };
 
-      // 次へ
-      function nextPage() {
-        event.preventDefault();
-        currentPage++;
-      };
-      // 戻る
-      function prevPage() {
-        event.preventDefault();
-        currentPage--;
-      };
-      //ここから処理した時
-      // クリックした時
-      $('.search__btn').on('click',function(data) {
-        keyword = $(".search__text__input").val();
-        currentPage = 1;
-        if (keyword === ""){
-          emptyHtml();
-          noText();
-        }
-        ajax();
-      });
-    //  エンターキーでも検索できる様にする
-      $("body").keydown(function (e) {
-        console.log(e);
-        // 13:enterKey
-        if (e.keyCode == 13) {
-        // ここに処理
+        // 次へ
+        function nextPage() {
+          event.preventDefault();
+          currentPage++;
+        };
+        // 戻る
+        function prevPage() {
+          event.preventDefault();
+          currentPage--;
+        };
+        //ここから処理した時
+        // クリックした時
+        $('.search__btn').on('click',function(data) {
           keyword = $(".search__text__input").val();
           currentPage = 1;
           if (keyword === ""){
             emptyHtml();
             noText();
           }
+          ajax();
+        });
+      //  エンターキーでも検索できる様にする
+        $("body").keydown(function (e) {
+          console.log(e);
+          // 13:enterKey
+          if (e.keyCode == 13) {
+          // ここに処理
+            keyword = $(".search__text__input").val();
+            currentPage = 1;
+            if (keyword === ""){
+              emptyHtml();
+              noText();
+            }
+              ajax();
+          }
+          // ページ送りもやってみた
+          if (e.keyCode === 39) {
+            nextPage();
             ajax();
-        }
-        // ページ送りもやってみた
-        if (e.keyCode === 39) {
+          }
+          if (e.keyCode === 37) {
+            prevPage();
+            ajax();
+          }
+        });
+      //  ページャー
+        $("body").on("click",('[data-js="page-next"]') , function() {
           nextPage();
           ajax();
-        }
-        if (e.keyCode === 37) {
+        });
+        $("body").on("click",('[data-js="page-prev"]') , function() {
           prevPage();
           ajax();
-        }
-    });
-    //  ページャー
-    $("body").on("click",('[data-js="page-next"]') , function() {
-      nextPage();
-      ajax();
-    });
-    $("body").on("click",('[data-js="page-prev"]') , function() {
-      prevPage();
-      ajax();
-    });
-  });
+        });
+      });
     </script>
   </body>
 </html>
