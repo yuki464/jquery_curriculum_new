@@ -93,19 +93,22 @@
         var currentPage = 0;
         var keyword = "";
           // 商品の羅列
-        function listHtml(index, item) {
-          var html =
-            `<li class="lists__item">
-              <div class="lists__item__inner">
-                <a href="${item.Item.itemUrl}" class="lists__item__link" target="_blank">
-                  <img src="${item.Item.mediumImageUrl}" class="lists__item__img" alt="">
-                  <p class="lists__item__detail">作品名：${item.Item.title}</p>
-                  <p class="lists__item__detail">作者：${item.Item.author}</p>
-                  <p class="lists__item__detail">出版社：${item.Item.publisherName}</p>
-                </a>
-              </div>
-            </li >`;
-          $('ul').prepend(html);
+        function listHtml(data) {
+          var html = ''
+            $.each(data.Items,function(index, data) {
+              html +=
+              `<li class="lists__item">
+                <div class="lists__item__inner">
+                  <a href="${data.Item.itemUrl}" class="lists__item__link" target="_blank">
+                    <img src="${data.Item.mediumImageUrl}" class="lists__item__img" alt="">
+                    <p class="lists__item__detail">作品名：${data.Item.title}</p>
+                    <p class="lists__item__detail">作者：${data.Item.author}</p>
+                    <p class="lists__item__detail">出版社：${data.Item.publisherName}</p>
+                  </a>
+                </div>
+              </li >`;
+            });
+          $('.lists').append(html);
         };
                 // ページャー
         function pageHtml(data) {
@@ -123,13 +126,14 @@
         };
         // 検索見つからない
         function noFindMessage() {
-          var html = `<p class="message">検索結果が見つかりませんでした。</p>`
-          $(".message").after(html).remove();
+          var html = `<p class="message">検索結果が見つかりませんでした。
+                      <br>別のキーワードで検索して下さい。</p>`
+          $(".message").append(html);
         };
         // キーワードが空　通信失敗時
         function noText() {
           var html = `<p class="message">検索文字を入力してください。</p>`
-          $(".message").after(html).remove();
+          $(".message").append(html);
         };
         // 何もない状態にする関数⭐︎
         function emptyHtml() {
@@ -139,7 +143,45 @@
         // 連打した時の関数（見本とおなじ）通信失敗時
         function errorSample() {
           var html = `<p class="message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>`
-          $(".message").after(html).remove();
+          $(".message").append(html);
+        };
+        function errorOflile() {
+          var html = `<p class="message">通信に失敗しました。インターネットの接続をご確認ください。</p>`
+          $(".message").append(html);
+        };
+        //成功時の関数
+        function doneAjax(res) {
+          if (res.count > 0) {
+            listHtml(res);
+            pageHtml(res);
+          } else if (res.count === 0) {
+            console.log("t")
+            noFindMessage();
+          }
+          // 無効化処理　ページャ
+          if( currentPage === 1) {
+            $('[data-js="page-prev"]').addClass("disabled");
+          }
+          if ( currentPage === res.pageCount) {
+            $('[data-js="page-next"]').addClass("disabled");
+          }
+        };
+        //失敗時関数
+        function failAjax(er) {
+          console.log(er);
+          emptyHtml();
+          if ( er.status === 400 ) {
+            noText();
+          }
+          if ( er.status === 429 ) {
+            errorSample();
+          }
+          if ( er.status === 0 ) {
+            errorOflile();
+          }
+          if (er.status === 503) {
+            $(".message").append("楽天BOOKSがメンテナンスしております。");
+          }
         };
         // Ajaxを関数にする⭐︎
         function ajax() {
@@ -153,48 +195,20 @@
               booksGenreId: '001',
               keyword: keyword,
               hits: '20',
-              timeout: 10000,
               pageCount: 100,
               page: currentPage,
             }
           })
-        .done(function(data) {
-          console.log(data);
-          if (data.count > 0) {
-            emptyHtml()
-            pageHtml(data);
-            $.each(data.Items,function(index,item) {
-              listHtml(index,item);
-            });
-          } else if (data.count === 0) {
-            console.log("t")
-            emptyHtml();
-            noFindMessage();
-          }
-          // 無効化処理　ページャ
-          if(data.pageCount === 1) {
-            $('[data-js="page-prev"]').addClass("disabled");
-            $('[data-js="page-next"]').addClass("disabled");
-          } else if (data.pageCount === data.page) {
-            console.log("test");
-            $('[data-js="page-next"]').addClass("disabled");
-          } else if(data.page === 1 ) {
-            console.log("test2")
-            $('[data-js="page-prev"]').addClass("disabled");
-          }
-
+        .done(function(res) {
+          console.log(res);
+          emptyHtml();
+          doneAjax(res);
         })
-        .fail(function(data) {
-          if (keyword === "") {
-            emptyHtml();
-            noText();
-          } else {
-            emptyHtml();
-            errorSample();
-          }
+        .fail(function(er) {
+          failAjax(er);
         });
       };
-      
+
         // 次へ
         function nextPage() {
           event.preventDefault();
@@ -209,7 +223,7 @@
 
         //ここから処理した時
         // クリックした時
-        $('.search__btn').on('click',function(data) {
+        $('.search__btn').on('click',function() {
           keyword = $(".search__text__input").val();
           currentPage = 1;
           ajax();
@@ -227,7 +241,6 @@
 
         //エンターキーでも検索できる様にする
         $("body").keydown(function (e) {
-          console.log(e);
           // 13:enterKey
           if (e.keyCode == 13) {
             // ここに処理
