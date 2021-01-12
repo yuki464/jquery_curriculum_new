@@ -91,7 +91,7 @@
       
       $(function() {
         var currentPage = 0;
-        var keyword = ""
+        var keyword = "";
           // 商品の羅列
         function listHtml(index, item) {
           var html =
@@ -126,22 +126,22 @@
           var html = `<p class="message">検索結果が見つかりませんでした。</p>`
           $(".message").after(html).remove();
         };
-        // キーワードが空
+        // キーワードが空　通信失敗時
         function noText() {
           var html = `<p class="message">検索文字を入力してください。</p>`
           $(".message").after(html).remove();
         };
-        // 空っぽにする関数
+        // 何もない状態にする関数⭐︎
         function emptyHtml() {
           $(".message").empty();
           $(".lists").empty();
         };
-        // 連打した時の関数（見本とおなじ）
+        // 連打した時の関数（見本とおなじ）通信失敗時
         function errorSample() {
           var html = `<p class="message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>`
           $(".message").after(html).remove();
         };
-        // Ajaxの関数
+        // Ajaxを関数にする⭐︎
         function ajax() {
           $.ajax({
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
@@ -171,7 +171,7 @@
             emptyHtml();
             noFindMessage();
           }
-          // 無効化処理
+          // 無効化処理　ページャ
           if(data.pageCount === 1) {
             $('[data-js="page-prev"]').addClass("disabled");
             $('[data-js="page-next"]').addClass("disabled");
@@ -194,7 +194,7 @@
           }
         });
       };
-
+      
         // 次へ
         function nextPage() {
           event.preventDefault();
@@ -205,29 +205,34 @@
           event.preventDefault();
           currentPage--;
         };
+
+
         //ここから処理した時
         // クリックした時
         $('.search__btn').on('click',function(data) {
           keyword = $(".search__text__input").val();
           currentPage = 1;
-          if (keyword === ""){
-            emptyHtml();
-            noText();
-          }
           ajax();
         });
-      //  エンターキーでも検索できる様にする
+
+      //  ページャー
+        $("body").on("click",('[data-js="page-next"]') , function() {
+          nextPage();
+          ajax();
+        });
+        $("body").on("click",('[data-js="page-prev"]') , function() {
+          prevPage();
+          ajax();
+        });
+
+        //エンターキーでも検索できる様にする
         $("body").keydown(function (e) {
           console.log(e);
           // 13:enterKey
           if (e.keyCode == 13) {
-          // ここに処理
+            // ここに処理
             keyword = $(".search__text__input").val();
             currentPage = 1;
-            if (keyword === ""){
-              emptyHtml();
-              noText();
-            }
               ajax();
           }
           // ページ送りもやってみた
@@ -239,15 +244,6 @@
             prevPage();
             ajax();
           }
-        });
-      //  ページャー
-        $("body").on("click",('[data-js="page-next"]') , function() {
-          nextPage();
-          ajax();
-        });
-        $("body").on("click",('[data-js="page-prev"]') , function() {
-          prevPage();
-          ajax();
         });
       });
     </script>
