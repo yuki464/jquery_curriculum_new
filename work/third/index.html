@@ -27,14 +27,15 @@
       // 今回やるのはタブメニューです。
       $(function(){
         //ナビクラスの中のリストをクリックした時
-        var nav = $(".nav").find("li");
-        var contents = $(".contents").find("li");
+        var nav = $(".nav").children("li");
+        var contents = $(".contents").children("li");
         nav.click(function() {
           //なむ＝LIに番号を与える物を代入
           var num = $(this).index();
           console.log(num);
           //コンテンツの中のli要素にis-hiddenクラスを加得るので上記で取得した適応する番号を添えて、以前にあったis-hiddenをリムーブで削除してあげている処理
-          contents.addClass("is-hidden").eq(num).removeClass("is-hidden");
+          contents.addClass("is-hidden")
+                  .eq(num).removeClass("is-hidden");
         });
       });
       // navの小要素であるliをクリックして、contents内の小要素であるli要素を表示させる。

@@ -85,31 +85,26 @@
     <script src="../../common/js/jquery.js"></script>
 
     <script>
-     $(function(){
-       //リストにリストを代入
-       var list = $(".list").find("li");
-       //セレクトクラスの中のvalでセレクトタグの中身をテキストに代入
-       $(".select").on("change",function() {
-        var text = $(this).val();
-        //セレクトタグがALLの時の処理
-        if(text === "all"){
-          $(list).each(function() { $(this).show() }); 
-          console.log(this);
-      //全部SHOWする
-        } else {  
-      //それ以外の処理
-          $(list).each(function() {
-        //リストのデータタイプがセレクトタグと一緒なら
-          if($(this).data("category-type")==text) { 
-            console.log(this);
-            $(this).show(); 
-          //データタイプの一致した物をSHOWする
+      $(function() {
+        //リストにリストを代入
+        var list = $(".list").children("li");
+        //セレクトクラスの中のvalでセレクトタグの中身をテキストに代入
+        $(".select").on("change", function() {
+          var text = $(this).val();
+          //セレクトタグがALLの時の処理
+          if(text === "all") {
+            list.show();
           } else {
-          //一致していない物はhideにて隠す
-          //そうでない時のthisに変化する
-            $(this).hide();
-            }
-          });
+            list.each(function(index, val) {
+              console.log(val);
+              //リストのデータタイプがセレクトタグと一緒なら
+              if($(val).data("category-type") === text) {
+                $(val).show();
+                // console.log(val);
+              } else {
+                $(val).hide();
+              }
+            });
           }
         });
       });

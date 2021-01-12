@@ -22,15 +22,16 @@
     <script src="../../common/js/jquery.js"></script>
     <script>
       // 今回やるのはモーダルです。
-      $(function(){
+      $(function() {
         $(".modal-show").click(fadeIn);
-          function fadeIn() {
-            $(".modal").fadeIn(3000);
-            $(".modal-close").click(fadeOut);
-            function fadeOut(){
-              $(".modal").fadeOut(3000);
-            }
-          }
+        $(".modal-close").click(fadeOut);
+  
+        function fadeIn() {
+          $(".modal").fadeIn();
+        };
+        function fadeOut() {
+          $(".modal").fadeOut();
+        };
       });
       // .modal-show をクリックすることで .modal をfadeInさせる。
       // .modal-close をクリックで .modal をfadeOutさせる。
