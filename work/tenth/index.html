@@ -93,17 +93,17 @@
         var currentPage = 0;
         var keyword = "";
           // 商品の羅列
-        function listHtml(data) {
+        function listHtml(res) {
           var html = ''
-            $.each(data.Items,function(index, data) {
+            $.each(res.Items,function(index, res) {
               html +=
               `<li class="lists__item">
                 <div class="lists__item__inner">
-                  <a href="${data.Item.itemUrl}" class="lists__item__link" target="_blank">
-                    <img src="${data.Item.mediumImageUrl}" class="lists__item__img" alt="">
-                    <p class="lists__item__detail">作品名：${data.Item.title}</p>
-                    <p class="lists__item__detail">作者：${data.Item.author}</p>
-                    <p class="lists__item__detail">出版社：${data.Item.publisherName}</p>
+                  <a href="${res.Item.itemUrl}" class="lists__item__link" target="_blank">
+                    <img src="${res.Item.mediumImageUrl}" class="lists__item__img" alt="">
+                    <p class="lists__item__detail">作品名：${res.Item.title}</p>
+                    <p class="lists__item__detail">作者：${res.Item.author}</p>
+                    <p class="lists__item__detail">出版社：${res.Item.publisherName}</p>
                   </a>
                 </div>
               </li >`;
@@ -111,11 +111,11 @@
           $('.lists').append(html);
         };
                 // ページャー
-        function pageHtml(data) {
+        function pageHtml(res) {
           var html =
             `<div class="pager" data-js="pager">
               <div class="counter">
-                <span class="counter-current">${data.page}</span>/<span class="counter-all">${data.pageCount}</span>
+                <span class="counter-current">${res.page}</span>/<span class="counter-all">${res.pageCount}</span>
               </div>
               <div class="btn-wrapper">
                 <a class="btn-item" data-js="page-prev" href="">前へ</a>
@@ -141,21 +141,21 @@
           $(".lists").empty();
         };
         // 連打した時の関数（見本とおなじ）通信失敗時
-        function errorSample() {
+        function error429() {
           var html = `<p class="message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>`
           $(".message").append(html);
         };
-        function errorOflile() {
+        function errorOfLine() {
           var html = `<p class="message">通信に失敗しました。インターネットの接続をご確認ください。</p>`
           $(".message").append(html);
         };
-        //成功時の関数
+        //成功時の関数⭐︎
         function doneAjax(res) {
+          emptyHtml();
           if (res.count > 0) {
             listHtml(res);
             pageHtml(res);
           } else if (res.count === 0) {
-            console.log("t")
             noFindMessage();
           }
           // 無効化処理　ページャ
@@ -166,7 +166,7 @@
             $('[data-js="page-next"]').addClass("disabled");
           }
         };
-        //失敗時関数
+        //失敗時関数⭐︎
         function failAjax(er) {
           console.log(er);
           emptyHtml();
@@ -174,10 +174,10 @@
             noText();
           }
           if ( er.status === 429 ) {
-            errorSample();
+            error429();
           }
           if ( er.status === 0 ) {
-            errorOflile();
+            errorOfLine();
           }
           if (er.status === 503) {
             $(".message").append("楽天BOOKSがメンテナンスしております。");
@@ -201,7 +201,6 @@
           })
         .done(function(res) {
           console.log(res);
-          emptyHtml();
           doneAjax(res);
         })
         .fail(function(er) {
@@ -246,7 +245,7 @@
             // ここに処理
             keyword = $(".search__text__input").val();
             currentPage = 1;
-              ajax();
+            ajax();
           }
           // ページ送りもやってみた
           if (e.keyCode === 39) {
