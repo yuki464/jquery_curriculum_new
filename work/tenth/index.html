@@ -136,21 +136,23 @@
           emptyHtml();
           switch(er.status) {
             case 400:
-            message.append("検索する文字を入力してください。");
+              message.append("検索する文字を入力してください。");
             break;
             case 429:
-            message.append("リクエスト過多です。しばらく時間をおいて試してみてください。");
+              message.append("リクエスト過多です。しばらく時間をおいて試してみてください。");
             break;
             case 0:
-            message.append("通信に失敗しました。インターネットの接続を確認してください。");
+              message.append("通信に失敗しました。インターネットの接続を確認してください。");
             break;
             case 503:
-            message.append("楽天BOOKSがメンテナンスしております。");
+              message.append("楽天BOOKSがメンテナンスしております。");
+            break;
+            case 500:
+              message.append("システムエラー。長時間続くようであれば、こちらよりごお問い合わせください。");
             break;
             default:
-            message.append("何かしらのエラーが起きています。時間をおいて試してみてください");
+              message.append("何かしらのエラーが起きています。時間をおいて試してみてください");
           }
-          
         };
         // Ajaxを関数にする⭐︎
         function booksSearch() {
@@ -176,7 +178,20 @@
             failAjax(er);
           });
         };
-
+        function hasDisabledNext() {
+          if ($("[data-js='page-next']").hasClass("disabled")) {
+              return false
+          }
+          currentPage++;
+          booksSearch();
+        };
+        function hasDisabledPrev() {
+          if ($("[data-js='page-prev']",).hasClass("disabled")) {
+              return false
+          }
+          currentPage--;
+          booksSearch();
+        };
         //ここから処理した時
         // クリックした時
         $("[data-js='search-btn']").on("click",function() {
@@ -188,13 +203,12 @@
       //  ページャー
         $("body").on("click", "[data-js='page-next']", function(event) {
           event.preventDefault();
-          currentPage++;
-          booksSearch();
+          hasDisabledNext();
         });
         $("body").on("click", "[data-js='page-prev']", function(event) {
           event.preventDefault();
-          currentPage--;
-          booksSearch();
+          console.log(currentPage);
+          hasDisabledPrev();
         });
 
         //エンターキーでも検索できる様にする
@@ -208,12 +222,10 @@
           }
           // ページ送りもやってみた
           if (e.keyCode === 39) {
-            currentPage++;
-            booksSearch();
+            hasDisabledNext();
           }
           if (e.keyCode === 37) {
-            currentPage--;
-            booksSearch();
+            hasDisabledPrev();
           }
         });
       });
